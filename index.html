@@ -2,90 +2,231 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data → Decisions: The Analytics Pyramid</title>
-  <!-- Tailwind via CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Data → Decisions: The Analytics Pyramid | Valesca Bravo Lab</title>
+  <meta name="description" content="Interactive Analytics Pyramid — from raw data to strategic action. Explore tools, techniques, examples and best practices for each layer." />
+  <meta property="og:title" content="Data → Decisions: The Analytics Pyramid" />
+  <meta property="og:description" content="Interactive learning tool: click each layer of the pyramid to discover how data transforms into business actions." />
+  <meta property="og:type" content="website" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <style> body{font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol", sans-serif} .chip{border-radius:9999px;padding:.25rem .6rem;cursor:pointer} .card{transition:transform .25s ease, box-shadow .25s ease} .card:hover{transform:translateY(-2px)} .layer{transition:all .25s ease} .layer:hover{opacity:.95; transform:translateY(-2px)} </style>
-  <!-- React 18 via CDN (no build step) -->
+  <!-- BRAND TYPOGRAPHY: DM Sans, DM Serif Display, DM Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- html2pdf for export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #09071a;
+      color: #eef2ff;
+      font-weight: 300;
+      scroll-behavior: smooth;
+    }
+    :root {
+      --navy: #1d085e;
+      --teal: #13d6c1;
+      --teal-dark: #0a9a88;
+      --bg-dark: #09071a;
+      --card-bg: #0d0b1e;
+      --border-dim: #1e1e38;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0d0b1e; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--teal-dark); }
+    
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-slide { animation: fadeSlideUp 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards; }
+    
+    .focus-ring:focus-visible {
+      outline: 2px solid #13d6c1;
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+    
+    .hero-brand {
+      background: linear-gradient(135deg, #0d0430, #1d085e, #0d3b38);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-brand::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(19,214,193,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    
+    .brand-card {
+      background: #0d0b1e;
+      border: 1px solid #1e1e38;
+      border-radius: 1.5rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .brand-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 12px 28px rgba(19,214,193,0.18);
+      transform: translateY(-2px);
+    }
+    
+    .chip-brand {
+      border-radius: 9999px;
+      padding: 0.25rem 0.9rem;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    
+    .pill-teal {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.7rem;
+      font-family: 'DM Mono', monospace;
+      background: rgba(19,214,193,0.12);
+      border: 1px solid rgba(19,214,193,0.4);
+      color: #13d6c1;
+      border-radius: 999px;
+      margin: 0.2rem;
+    }
+    
+    .btn-export {
+      background-color: #1d085e;
+      font-family: 'DM Mono', monospace;
+      transition: all 0.2s;
+    }
+    .btn-export:hover {
+      background-color: #0a9a88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(19,214,193,0.3);
+    }
+    
+    .layer-rect {
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+    }
+    .layer-rect:hover {
+      filter: brightness(1.05);
+      transform: translateY(-2px);
+    }
+    
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-family: 'DM Mono', monospace;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-b from-slate-50 to-blue-50 text-gray-800">
-  <header class="max-w-6xl mx-auto px-6 py-10">
-    <a href="https://valescabravo.github.io/" class="inline-flex items-center text-sm text-blue-700 hover:underline">← Back to Portfolio</a>
-    <a href="https://valescabravo.github.io/lab" class="inline-flex items-center text-sm text-blue-700 hover:underline">← Back to the lab</a>
-    <h1 class="text-3xl md:text-5xl font-extrabold mt-4 leading-tight">Data → Decisions: The Analytics Pyramid
-      <span class="block text-xl md:text-2xl font-semibold text-gray-600">Click each layer to explore tools, techniques, examples, and best practices</span>
-    </h1>
-    <p class="mt-3 text-gray-700 max-w-3xl">A didactic, portfolio-ready interactive that explains how raw data becomes actions that move the business — and how to do each layer well.</p>
-    <div class="mt-4 flex flex-wrap gap-2">
-      <span class="chip bg-indigo-100 text-indigo-800">Interactive</span>
-      <span class="chip bg-emerald-100 text-emerald-800">React (CDN)</span>
-      <span class="chip bg-purple-100 text-purple-800">GitHub Pages‑ready</span>
+<body class="bg-[#09071a] font-['DM_Sans'] antialiased">
+
+  <div class="hero-brand relative overflow-hidden">
+    <div class="relative max-w-6xl mx-auto px-6 py-12 md:py-16 z-10">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <a href="https://valescabravo.github.io/" class="inline-flex items-center text-sm text-teal-300 hover:text-teal-200 transition-colors font-mono tracking-wide focus-ring">← Back to Portfolio</a>
+          <span class="mx-2 text-teal-500/50">/</span>
+          <a href="https://valescabravo.github.io/lab" class="inline-flex items-center text-sm text-teal-300 hover:text-teal-200 transition-colors font-mono tracking-wide focus-ring">Back to the Lab</a>
+        </div>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold mt-6 leading-tight serif-heading text-white">
+        Data → Decisions: The Analytics Pyramid
+        <span class="block text-xl md:text-2xl font-light text-teal-200 mt-2">Click each layer to explore tools, techniques, examples, and best practices</span>
+      </h1>
+      <p class="mt-4 text-teal-100/80 max-w-3xl text-lg">A didactic, portfolio-ready interactive that explains how raw data becomes actions that move the business — and how to do each layer well.</p>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <span class="pill-teal">Interactive</span>
+        <span class="pill-teal">React CDN</span>
+        <span class="pill-teal">GitHub Pages‑ready</span>
+        <span class="pill-teal">2026</span>
+      </div>
     </div>
-  </header>
+  </div>
 
-  <main id="app" class="max-w-6xl mx-auto px-6 pb-20"></main>
+  <main id="app" class="max-w-6xl mx-auto px-6 pb-20 -mt-8 relative z-10"></main>
 
-  <footer class="text-center text-sm text-gray-500 pb-10">© 2026 Valesca Bravo — Interactive Lab</footer>
+  <footer class="bg-[#05021a] border-t border-[#1e1e38] py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p class="text-gray-400 font-mono text-sm">© 2026 Valesca Bravo — Interactive Lab</p>
+    </div>
+  </footer>
 
   <script type="text/babel">
-    const { useState, useMemo, useEffect } = React;
+    const { useState, useEffect, useRef, useMemo } = React;
 
     const layers = [
-      {k:'data', title:'Data', color:'#3b82f6', def:'Raw, unprocessed facts (events, rows, logs). Quality matters.',
+      { k:'data', title:'Data', color:'#3b82f6', def:'Raw, unprocessed facts (events, rows, logs). Quality matters.',
         tools:['SQL','Excel/Sheets','ETL (Airbyte/Fivetran)','Data Warehouse (BigQuery/Snowflake)'],
         techniques:['Data collection','Schema design','Data cleaning','Deduplication','Validation'],
         examples:['Web logs','Transactions','CRM exports','IoT sensor events'],
-        practices:['Define data owners & SLAs','Adopt naming conventions','Track lineage','Automate tests']},
-      {k:'information', title:'Information', color:'#10b981', def:'Structured data with context — organized for understanding.',
+        practices:['Define data owners & SLAs','Adopt naming conventions','Track lineage','Automate tests'] },
+      { k:'information', title:'Information', color:'#10b981', def:'Structured data with context — organized for understanding.',
         tools:['Power BI','Tableau','Looker','Data Studio/Looker Studio'],
         techniques:['Dimensional modeling','Metrics definitions','Views/materializations','Dashboarding'],
         examples:['Sales by region dashboard','Revenue by day','Cohort tables'],
-        practices:['Visual hierarchy & decluttering','Single source of truth for metrics','Use friendly field names']},
-      {k:'insights', title:'Insights', color:'#8b5cf6', def:'Meaningful patterns and relationships that explain the “why”.',
+        practices:['Visual hierarchy & decluttering','Single source of truth for metrics','Use friendly field names'] },
+      { k:'insights', title:'Insights', color:'#8b5cf6', def:'Meaningful patterns and relationships that explain the “why”.',
         tools:['Python','R','Notebooks','Stat packages','AutoML'],
         techniques:['Segmentation/clustering','A/B testing design','Correlation/causality basics','Attribution basics'],
         examples:['Churn drivers','Product affinity map','LTV segment differences'],
-        practices:['State assumptions','Distinguish signal vs noise','Quantify uncertainty','Peer review findings']},
-      {k:'decisions', title:'Decisions', color:'#f59e0b', def:'Choosing a course based on insights, objectives, and constraints.',
+        practices:['State assumptions','Distinguish signal vs noise','Quantify uncertainty','Peer review findings'] },
+      { k:'decisions', title:'Decisions', color:'#f59e0b', def:'Choosing a course based on insights, objectives, and constraints.',
         tools:['Scenario modeling','Forecasting','Decision trees','Experiment platforms'],
         techniques:['What‑if analysis','Budget reallocation','Risk/impact matrix'],
         examples:['Shift budget to high‑ROAS','Prioritize retention features'],
-        practices:['Tie to success metrics','Document rationale','Involve stakeholders','Consider ethics & risk']},
-      {k:'action', title:'Action', color:'#ef4444', def:'Operational execution and measurement in the real world.',
+        practices:['Tie to success metrics','Document rationale','Involve stakeholders','Consider ethics & risk'] },
+      { k:'action', title:'Action', color:'#ef4444', def:'Operational execution and measurement in the real world.',
         tools:['Marketing automation','CRM/ERP','Feature flags','CDP','MLOps'],
         techniques:['Campaign launch','Personalisation','Rollout & monitoring','Alerting'],
         examples:['Launch segmented email','Change pricing','Ship feature to 10%'],
-        practices:['Define KPIs & guardrails','Monitor & rollback plan','Close loop: log results back to data']},
+        practices:['Define KPIs & guardrails','Monitor & rollback plan','Close loop: log results back to data'] }
     ];
 
-    const TabBtn = ({label,active,onClick,color}) => (
-      <button onClick={onClick} className={`chip border ${active?`text-white`:`text-${color}-700`} ${active?`bg-${color}-600 border-${color}-700`:`bg-white border-${color}-200 hover:bg-${color}-50`}`}>{label}</button>
+    const TabBtn = ({ label, active, onClick }) => (
+      <button onClick={onClick} className={`focus-ring px-3 py-1.5 rounded-full text-xs font-mono transition-all ${active ? 'bg-[#1d085e] text-teal-300 border border-teal-500' : 'bg-[#0f0c23] text-gray-300 border border-[#2a2a4a] hover:border-teal-500'}`}>
+        {label}
+      </button>
     );
 
-    function Pyramid({active, setActive, setHover}){
-      // Responsive SVG pyramid: scales to container width
-      const width = 600, height = 380, margin = 16;
+    function Pyramid({ active, setActive, setHover }) {
+      const width = 600, height = 380, margin = 20;
       const levels = layers.length;
       const band = (height - margin*2) / levels;
       const baseWidth = width - margin*2;
 
       return (
-        <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="auto" className="mx-auto block">
+        <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="auto" className="mx-auto block" role="img" aria-label="Analytics pyramid with five layers: Data, Information, Insights, Decisions, Action">
           {layers.map((L, i) => {
             const y = height - margin - (i+1)*band;
-            const pct = (levels - i)/levels; // narrower toward the top
+            const pct = (levels - i)/levels;
             const w = baseWidth * pct;
             const x = (width - w)/2;
-            const isActive = active===L.k;
+            const isActive = active === L.k;
             return (
-              <g key={L.k} className="layer cursor-pointer" onClick={()=>{setActive(L.k); setHover(null);}}
-                 onMouseEnter={()=>setHover(L)} onMouseLeave={()=>setHover(null)}>
-                <rect x={x} y={y} width={w} height={band-8} rx="12" fill={L.color} opacity={isActive?0.95:0.8}/>
-                <text x={width/2} y={y + (band-8)/2 + 4} textAnchor="middle" className="fill-white" style={{fontSize:14,fontWeight:700}}>{L.title}</text>
+              <g key={L.k}
+                 role="button"
+                 tabIndex="0"
+                 aria-label={`Layer: ${L.title}, click to explore details`}
+                 onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActive(L.k); setHover(null); } }}
+                 onClick={() => { setActive(L.k); setHover(null); }}
+                 onMouseEnter={() => setHover(L)}
+                 onMouseLeave={() => setHover(null)}
+                 className="layer-rect focus-ring">
+                <rect x={x} y={y} width={w} height={band-6} rx="14" fill={L.color} opacity={isActive ? 0.95 : 0.75} stroke={isActive ? "#13d6c1" : "none"} strokeWidth="2"/>
+                <text x={width/2} y={y + (band-6)/2 + 5} textAnchor="middle" className="fill-white font-bold" style={{fontSize:15, fontFamily:"'DM Sans',sans-serif", fontWeight:600}}>{L.title}</text>
               </g>
             );
           })}
@@ -93,97 +234,204 @@
       );
     }
 
-    const Pill = (t) => <span className="inline-flex items-center px-2 py-1 text-xs bg-gray-100 rounded border border-gray-200 mr-2 mb-2">{t}</span>;
-
-    function SidePanel({hovered, active}){
-      // Show hover preview if present and not the active; else show active details
-      const showPreview = hovered && (!active || hovered.k !== active.k);
-      const L = showPreview ? hovered : active || layers[0];
+    function SidePanel({ hovered, active }) {
+      const showPreview = hovered !== null && (!active || hovered.k !== active.k);
+      const displayLayer = showPreview ? hovered : (active || layers[0]);
       const [tab, setTab] = useState('def');
-      useEffect(()=>{ setTab(showPreview? 'def' : 'def'); }, [hovered, active]);
+      
+      useEffect(() => { setTab('def'); }, [displayLayer?.k]);
+
+      const [copied, setCopied] = useState(false);
+      const copySummary = () => {
+        const summary = `${displayLayer.title}\nDefinition: ${displayLayer.def}\nTools: ${displayLayer.tools.join(', ')}\nTechniques: ${displayLayer.techniques.join(', ')}\nExamples: ${displayLayer.examples.join(', ')}\nBest Practices: ${displayLayer.practices.join(', ')}`;
+        navigator.clipboard.writeText(summary);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      const handleExport = () => {
+        const element = document.getElementById('export-panel-content');
+        if(element) {
+          const opt = { margin: [0.5,0.5,0.5,0.5], filename: `analytics_pyramid_${displayLayer.k}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+          html2pdf().set(opt).from(element).save();
+        }
+      };
+
+      const PillWrapper = (items) => <div className="flex flex-wrap gap-1">{items.map((item, idx) => <span key={idx} className="pill-teal">{item}</span>)}</div>;
 
       return (
-        <div className="space-y-3">
-          <div className="bg-white border rounded-2xl p-4 shadow-sm">
-            <div className="text-xs text-gray-500 mb-1">{showPreview? 'Preview' : 'Selected'}</div>
-            <div className="text-base font-semibold flex items-center gap-2">
-              <span style={{background:L.color}} className="inline-block w-2 h-2 rounded-full"></span>
-              {L.title}
+        <div className="space-y-4">
+          <div className="bg-[#0d0b1e] border border-teal-500/40 rounded-xl p-4 shadow-md transition-all">
+            <div className="text-xs text-teal-300 font-mono mb-1">{showPreview ? '🔍 Hover Preview' : '📌 Selected Layer'}</div>
+            <div className="text-base font-semibold flex items-center gap-2 text-white">
+              <span style={{background:displayLayer.color}} className="inline-block w-3 h-3 rounded-full"></span>
+              <span className="serif-heading">{displayLayer.title}</span>
             </div>
-            <div className="mt-2 text-sm text-gray-700">{L.def}</div>
+            <div className="mt-2 text-sm text-gray-200">{displayLayer.def}</div>
           </div>
 
           {!showPreview && (
-            <div className="bg-white/90 backdrop-blur border rounded-2xl p-4 shadow">
-              <div className="flex flex-wrap gap-2 mb-3">
-                <TabBtn label="Definition" active={tab==='def'} onClick={()=>setTab('def')} color="indigo"/>
-                <TabBtn label="Tools" active={tab==='tools'} onClick={()=>setTab('tools')} color="emerald"/>
-                <TabBtn label="Techniques" active={tab==='tech'} onClick={()=>setTab('tech')} color="violet"/>
-                <TabBtn label="Examples" active={tab==='ex'} onClick={()=>setTab('ex')} color="amber"/>
-                <TabBtn label="Good practice" active={tab==='gp'} onClick={()=>setTab('gp')} color="blue"/>
+            <div id="export-panel-content" className="bg-[#0d0b1e] border border-[#1e1e38] rounded-2xl p-5 shadow-xl transition-all">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <TabBtn label="Definition" active={tab === 'def'} onClick={() => setTab('def')} />
+                <TabBtn label="Tools" active={tab === 'tools'} onClick={() => setTab('tools')} />
+                <TabBtn label="Techniques" active={tab === 'tech'} onClick={() => setTab('tech')} />
+                <TabBtn label="Examples" active={tab === 'ex'} onClick={() => setTab('ex')} />
+                <TabBtn label="Best practices" active={tab === 'gp'} onClick={() => setTab('gp')} />
               </div>
-              {tab==='def' && <div className="text-sm text-gray-700">{L.def}</div>}
-              {tab==='tools' && <div className="flex flex-wrap">{L.tools.map(Pill)}</div>}
-              {tab==='tech' && <div className="flex flex-wrap">{L.techniques.map(Pill)}</div>}
-              {tab==='ex' && <ul className="list-disc list-inside text-sm space-y-1">{L.examples.map((e,i)=>(<li key={i}>{e}</li>))}</ul>}
-              {tab==='gp' && <ul className="list-disc list-inside text-sm space-y-1">{L.practices.map((e,i)=>(<li key={i}>{e}</li>))}</ul>}
+              
+              <div className="text-gray-200 text-sm">
+                {tab === 'def' && <p>{displayLayer.def}</p>}
+                {tab === 'tools' && PillWrapper(displayLayer.tools)}
+                {tab === 'tech' && PillWrapper(displayLayer.techniques)}
+                {tab === 'ex' && <ul className="list-disc list-inside space-y-1">{displayLayer.examples.map((e,i) => <li key={i}>{e}</li>)}</ul>}
+                {tab === 'gp' && <ul className="list-disc list-inside space-y-1">{displayLayer.practices.map((p,i) => <li key={i}>{p}</li>)}</ul>}
+              </div>
+            </div>
+          )}
+
+          {!showPreview && (
+            <div className="flex flex-wrap gap-3 mt-2">
+              <button onClick={handleExport} className="btn-export inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-mono text-white transition-all focus-ring">
+                📄 Export as PDF
+              </button>
+              <button onClick={copySummary} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-mono bg-[#1d085e] border border-teal-500/60 text-teal-200 hover:bg-teal-dark hover:text-white transition-all focus-ring">
+                📋 Copy Summary
+              </button>
+              {copied && <span className="text-teal-400 text-xs font-mono animate-pulse">✓ Copied!</span>}
             </div>
           )}
         </div>
       );
     }
 
-    function App(){
-      const [activeKey, setActiveKey] = useState('information');
-      const [hovered, setHovered] = useState(null);
-
-      useEffect(()=>{
-        const hash = window.location.hash.replace('#','');
-        if(layers.find(l=>l.k===hash)) setActiveKey(hash);
-      },[]);
-      useEffect(()=>{ if(activeKey) window.location.hash = activeKey; },[activeKey]);
-
-      const active = useMemo(()=> layers.find(l=>l.k===activeKey), [activeKey]);
+    // ✨ NEW: Mini Case Study Card (replaces old "Portfolio Idea")
+    const CaseStudyCard = () => {
+      const steps = [
+        { layer: 'Data', desc: '500K raw clickstream events + 45K transactions', icon: '📦', color: '#3b82f6' },
+        { layer: 'Information', desc: 'Dashboard reveals 40% cart abandonment rate', icon: '📊', color: '#10b981' },
+        { layer: 'Insights', desc: 'Users hesitate at shipping costs (p<0.001)', icon: '💡', color: '#8b5cf6' },
+        { layer: 'Decisions', desc: 'Test free shipping on orders >$50', icon: '🎯', color: '#f59e0b' },
+        { layer: 'Action', desc: 'Launch A/B test → 23% conversion lift, +18% AOV', icon: '🚀', color: '#ef4444' }
+      ];
 
       return (
-        <div className="space-y-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="bg-gradient-to-br from-[#1d085e]/20 to-[#0d3b38]/20 border border-teal-500/30 rounded-2xl p-6 hover:border-teal-500 transition-all shadow-xl">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="text-3xl">📈</span>
+            <div>
+              <h3 className="text-xl font-bold text-white serif-heading">Mini Case Study: E‑commerce Checkout Optimization</h3>
+              <p className="text-xs text-teal-300 font-mono mt-1">How the Analytics Pyramid drives real business impact</p>
+            </div>
+          </div>
+          
+          <div className="relative">
+            {/* Vertical connector line */}
+            <div className="absolute left-[15px] top-8 bottom-8 w-px bg-teal-500/30 hidden md:block"></div>
+            
+            <div className="space-y-4">
+              {steps.map((step, idx) => (
+                <div key={idx} className="flex gap-4 items-start group">
+                  <div className="relative z-10">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg" style={{ backgroundColor: step.color }}>
+                      <span className="text-white text-xs">{idx + 1}</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 bg-[#0d0b1e]/60 rounded-xl p-3 border border-[#1e1e38] group-hover:border-teal-500/50 transition-all">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{step.icon}</span>
+                        <span className="font-mono text-teal-300 text-sm font-semibold">{step.layer}</span>
+                      </div>
+                      <span className="text-xs text-gray-400 font-mono">↓</span>
+                    </div>
+                    <p className="text-gray-200 text-sm mt-1 ml-1">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="mt-5 pt-4 border-t border-teal-500/20 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 rounded-full">
+              <span className="text-teal-300 text-sm font-mono">📈 Result:</span>
+              <span className="text-white text-sm font-semibold">+23% Conversion Lift &nbsp;|&nbsp; +18% AOV</span>
+            </div>
+            <p className="text-xs text-gray-400 mt-3 font-mono">💡 The closed loop: Action results are logged back to Data layer for continuous improvement</p>
+          </div>
+        </div>
+      );
+    };
+
+    // Close the Loop + Tips Card (merged elegantly)
+    const BottomCards = () => (
+      <div className="grid md:grid-cols-2 gap-5 mt-4">
+        <div className="bg-[#0d0b1e] border border-[#1e1e38] rounded-2xl p-5 hover:border-teal-500 transition-all">
+          <h3 className="text-lg font-bold text-white serif-heading mb-2">🔄 Close the Loop</h3>
+          <p className="text-sm text-gray-300">After <strong className="text-teal-300">Action</strong>, measure results and feed them back into <strong className="text-teal-300">Data</strong>. This creates continuous improvement and a virtuous cycle.</p>
+          <div className="mt-3 flex items-center gap-2 text-xs text-teal-300/70 font-mono">
+            <span>Data</span> <span>→</span> <span>Information</span> <span>→</span> <span>Insights</span> <span>→</span> <span>Decisions</span> <span>→</span> <span>Action</span> <span className="text-teal-400">↻</span>
+          </div>
+        </div>
+        <div className="bg-[#0d0b1e] border border-[#1e1e38] rounded-2xl p-5 hover:border-teal-500 transition-all">
+          <h3 className="text-lg font-bold text-white serif-heading mb-2">✨ Tips for Clarity</h3>
+          <ul className="list-disc list-inside text-sm space-y-1 text-gray-300">
+            <li>Use consistent metric names and units across all layers</li>
+            <li>Prefer simple visuals; annotate key points directly</li>
+            <li>Document assumptions, limitations, and confidence levels</li>
+            <li>Involve stakeholders early in the decision layer</li>
+          </ul>
+        </div>
+      </div>
+    );
+
+    function App() {
+      const [activeKey, setActiveKey] = useState(() => {
+        const saved = localStorage.getItem('analyticsPyramidLayer');
+        const hash = window.location.hash.replace('#', '');
+        const fromHash = layers.find(l => l.k === hash);
+        if (fromHash) return fromHash.k;
+        if (saved && layers.find(l => l.k === saved)) return saved;
+        return 'information';
+      });
+      const [hovered, setHovered] = useState(null);
+
+      useEffect(() => {
+        window.location.hash = activeKey;
+        localStorage.setItem('analyticsPyramidLayer', activeKey);
+      }, [activeKey]);
+
+      const activeLayer = useMemo(() => layers.find(l => l.k === activeKey), [activeKey]);
+
+      return (
+        <div className="space-y-10">
+          <div className="grid lg:grid-cols-2 gap-10 items-start">
             <div>
               <Pyramid active={activeKey} setActive={setActiveKey} setHover={setHovered} />
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-gray-600">
+              <div className="mt-6 flex flex-wrap gap-2 justify-center">
                 {layers.map(l => (
-                  <button key={l.k} className={`chip border ${activeKey===l.k? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'}`} onClick={()=>{ setActiveKey(l.k); setHovered(null); }} onMouseEnter={()=> setHovered(l)} onMouseLeave={()=> setHovered(null)}>
+                  <button key={l.k}
+                    className={`chip-brand border transition-all focus-ring ${activeKey === l.k ? 'bg-[#1d085e] text-teal-300 border-teal-500 shadow-md' : 'bg-[#0f0c23] text-gray-300 border-[#2a2a4a] hover:border-teal-500'}`}
+                    onClick={() => { setActiveKey(l.k); setHovered(null); }}
+                    onMouseEnter={() => setHovered(l)}
+                    onMouseLeave={() => setHovered(null)}>
                     {l.title}
                   </button>
                 ))}
               </div>
             </div>
-            <SidePanel hovered={hovered} active={active} />
+            <SidePanel hovered={hovered} active={activeLayer} />
           </div>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="card bg-white/90 border rounded-2xl p-5">
-              <h3 className="text-lg font-bold">Close the Loop</h3>
-              <p className="text-sm text-gray-700">After <strong>Action</strong>, measure results and feed them back into <strong>Data</strong>. This creates continuous improvement.</p>
-            </div>
-            <div className="card bg-white/90 border rounded-2xl p-5">
-              <h3 className="text-lg font-bold">Tips for Clarity</h3>
-              <ul className="list-disc list-inside text-sm space-y-1">
-                <li>Use consistent metric names and units.</li>
-                <li>Prefer simple visuals; annotate key points.</li>
-                <li>Document assumptions and limits of analysis.</li>
-              </ul>
-            </div>
-            <div className="card bg-white/90 border rounded-2xl p-5">
-              <h3 className="text-lg font-bold">Portfolio Idea</h3>
-              <p className="text-sm text-gray-700">Add a case study: take one dataset → walk it through all 5 layers to a real decision and action, with before/after KPIs.</p>
-            </div>
-          </div>
+          
+          {/* New Case Study Card - replaces old Portfolio Idea */}
+          <CaseStudyCard />
+          
+          <BottomCards />
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
+    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
   </script>
 </body>
 </html>
